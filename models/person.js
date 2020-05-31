@@ -1,33 +1,61 @@
 class Person {
-  constructor() {
+  constructor(infected) {
     this.x = random(windowWidth);
     this.y = random(height);
     this.diameter = 20;
-    this.speed = 20;
+    this.speed = 3;
     this.angle = random(360);
+    this.isInfected = infected;
   }
 
   move() {
-    this.x += Math.cos(this.angle);
-    this.y += Math.sin(this.angle);
+    this.x += this.speed * Math.cos(this.angle);
+    this.y += this.speed * Math.sin(this.angle);
+  }
+
+  update() {
+    this.move();
+    this.bounce();
+    this.show();
   }
 
   show() {
-    this.move();
-    this.bounce();
-    ellipse(this.x, this.y, this.diameter);
+    if (this.isInfected) {
+      push();
+      fill("red");
+      ellipse(this.x, this.y, this.diameter);
+      pop();
+    } else {
+      ellipse(this.x, this.y, this.diameter);
+    }
+  }
+
+  infect(person) {
+    if (this.isInfected && !person.isInfected) {
+      console.log("http://127.0.0.1:5500/index.html");
+      //if its in distance
+      if (
+        (this.x - person.x) * (this.x - person.x) +
+          (this.y - person.y) * (this.y - person.y) <=
+        this.diameter * this.diameter
+      ) {
+        console.log("asd");
+        person.isInfected = true;
+      }
+    }
+  }
+
+  collidedWall() {
+    return (
+      this.x > windowWidth || this.y > windowHeight || this.x < 0 || this.y < 0
+    );
   }
 
   bounce() {
-    if (
-      this.x > windowWidth ||
-      this.y > windowHeight ||
-      this.x < 0 ||
-      this.y < 0
-    ) {
+    if (this.collidedWall()) {
       this.angle = random(360);
-      var newX = Math.cos(this.angle);
-      var newY = Math.sin(this.angle);
+      var newX = this.speed * Math.cos(this.angle);
+      var newY = this.speed * Math.sin(this.angle);
       while (
         this.x + newX > windowWidth ||
         this.y + newY > windowHeight ||
@@ -35,8 +63,8 @@ class Person {
         this.y + newY < 0
       ) {
         this.angle = random(360);
-        newX = Math.cos(this.angle);
-        newY = Math.sin(this.angle);
+        newX = this.speed * Math.cos(this.angle);
+        newY = this.speed * Math.sin(this.angle);
       }
     }
   }

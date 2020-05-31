@@ -5,7 +5,10 @@ class Person {
     this.diameter = 20;
     this.speed = 3;
     this.angle = random(360);
+    this.isInfecting = false;
     this.isInfected = infected;
+    this.hasContacted = false;
+    this.red = infected ? 255 : 0;
   }
 
   move() {
@@ -17,12 +20,25 @@ class Person {
     this.move();
     this.bounce();
     this.show();
+    this.infecting();
+  }
+
+  infecting() {
+    if (this.isInfecting && this.red < 255) {
+      this.red += 1;
+    }
+    if (this.isInfecting && this.red === 255) {
+      this.isInfecting = false;
+      this.isInfected = true;
+    }
   }
 
   show() {
-    if (this.isInfected) {
+    if (this.isInfected || this.isInfecting) {
       push();
-      fill("red");
+      this.isInfected
+        ? fill(`rgb(${this.red}, 0, 0)`)
+        : fill(`rgb(${this.red}, ${255 - this.red}, ${255 - this.red})`);
       ellipse(this.x, this.y, this.diameter);
       pop();
     } else {
@@ -31,16 +47,29 @@ class Person {
   }
 
   infect(person) {
-    if (this.isInfected && !person.isInfected) {
-      console.log("http://127.0.0.1:5500/index.html");
+    if (
+      this.isInfected &&
+      !person.isInfected &&
+      !this.isInfecting &&
+      !person.isInfecting
+    ) {
       //if its in distance
       if (
         (this.x - person.x) * (this.x - person.x) +
           (this.y - person.y) * (this.y - person.y) <=
         this.diameter * this.diameter
       ) {
-        console.log("asd");
-        person.isInfected = true;
+        if (Math.floor(Math.random() * 9) === 1) {
+          if (!this.hasContacted && !person.hasContacted) {
+            person.isInfecting = true;
+          }
+        } else {
+          this.hasContacted = true;
+          person.hasContacted = true;
+        }
+      } else {
+        this.hasContacted = false;
+        person.hasContacted = false;
       }
     }
   }

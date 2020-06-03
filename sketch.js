@@ -1,11 +1,14 @@
 var people = [];
 var totalPPL = 40;
-var totalInfecters = 8;
+var totalInfecters = totalPPL / 5;
 let socialDistance;
 let hasStarted = false;
 let isGatheringApplied = false;
 let isMaskApplied = false;
 let isStayingHomeApplied = false;
+let start = Date.now();
+let end;
+let isAllInfected = false;
 
 function generatePPL() {
   for (var i = 0; i < totalPPL; i++) {
@@ -20,13 +23,23 @@ function displayRestrictions() {
   push();
   textSize(22);
   text(
-    `Gathering restrction ${isGatheringApplied ? "enabled" : "disabled"}`,
+    `Gathering restrction: ${isGatheringApplied ? "Enabled" : "Disabled"}`,
     10,
     30
   );
-  text(`Mask ${isMaskApplied ? "enabled" : "disabled"}`, 10, 60);
-  text(`Staying home ${isStayingHomeApplied ? "enabled" : "disabled"}`, 10, 90);
+  text(`Mask: ${isMaskApplied ? "Enabled" : "Disabled"}`, 10, 60);
+  text(
+    `Staying home: ${isStayingHomeApplied ? "Enabled" : "Disabled"}`,
+    10,
+    90
+  );
   pop();
+}
+
+function setSneezeBound() {
+  people.forEach((each) => {
+    each.sneezeBound = isMaskApplied ? 1 : 50;
+  });
 }
 
 function restartSimulation() {
@@ -34,29 +47,36 @@ function restartSimulation() {
   totalPPL = isGatheringApplied ? 10 : 40;
   totalInfecters = Math.round(totalPPL / 5);
   generatePPL();
+  end = undefined;
+  isAllInfected = false;
+  start = Date.now();
+}
+
+function setPause() {
+  people.forEach((each) => {
+    each.pause = isStayingHomeApplied ? true : false;
+  });
 }
 
 function setupButtons() {
-  btnGathering = createButton("Apply Gathering restriction");
-  btnSocialDistance = createButton("Apply Mask restriction");
-  btnStayingHome = createButton("Apply Staying Home restriction");
+  btnGathering = createButton("Toggle Gathering restriction");
+  btnMask = createButton("Toggle Mask restriction");
+  btnStayingHome = createButton("Toggle Staying Home restriction");
   btnRestart = createButton("Restart");
   btnGathering.position(10, windowHeight - 30);
-  btnSocialDistance.position(170, windowHeight - 30);
-  btnStayingHome.position(360, windowHeight - 30);
+  btnMask.position(175, windowHeight - 30);
+  btnStayingHome.position(315, windowHeight - 30);
   btnRestart.position(windowWidth - 70, windowHeight - 30);
   btnRestart.mousePressed(restartSimulation);
   btnGathering.mousePressed(() => {
     isGatheringApplied = !isGatheringApplied;
     restartSimulation();
   });
-  btnSocialDistance.mousePressed(() => {
-    isSocialDistanceApplied = !isSocialDistanceApplied;
-    restartSimulation();
+  btnMask.mousePressed(() => {
+    isMaskApplied = !isMaskApplied;
   });
   btnStayingHome.mousePressed(() => {
     isStayingHomeApplied = !isStayingHomeApplied;
-    restartSimulation();
   });
 }
 
@@ -67,11 +87,51 @@ function showPPL() {
   }
 }
 
-function checkInfect() {
+function displayTime() {
+  push();
+  textSize(30);
+  if (!end) {
+    text(
+      `Duration: ${Math.round((Date.now() - start) / 1000)}s`,
+      windowWidth / 2 - 60,
+      30
+    );
+  }
+  pop();
+}
+
+function infect() {
   for (var i = 0; i < totalPPL + totalInfecters; i++) {
     for (var j = 0; j < totalPPL + totalInfecters; j++) {
       people[i].infect(people[j]);
     }
+  }
+}
+
+function checkInfection() {
+  for (var i = 0; i < totalPPL + totalInfecters; i++) {
+    if (!people[i].isInfected) {
+      return;
+    }
+  }
+  isAllInfected = true;
+  if (!end) {
+    end = Date.now();
+  }
+}
+
+function displayResult() {
+  if (isAllInfected) {
+    push();
+    textSize(30);
+    text(
+      `Simulation completed, it took ${Math.round(
+        (end - start) / 1000
+      )}s to infect everyone`,
+      windowWidth / 2 - 330,
+      windowHeight / 2 - 30
+    );
+    pop();
   }
 }
 
@@ -84,6 +144,11 @@ function setup() {
 function draw() {
   background(50, 89, 100);
   showPPL();
-  checkInfect();
+  infect();
+  setSneezeBound();
+  checkInfection();
+  displayResult();
+  setPause();
+  displayTime();
   displayRestrictions();
 }

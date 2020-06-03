@@ -9,22 +9,23 @@ class Person {
     this.isInfected = infected;
     this.hasContacted = false;
     this.red = infected ? 255 : 0;
-    this.sneezeRange = 0;
+    this.sneezeTracker = 0;
     this.sneezeBound = 50;
+    this.pause = false;
   }
 
   sneeze() {
-    if (this.isInfected && this.sneezeRange < this.sneezeBound) {
-      this.sneezeRange += 0.5;
+    if (this.isInfected) {
+      this.sneezeTracker += 0.5;
       push();
       fill(50, 89, 100);
-      ellipse(this.x, this.y, this.sneezeRange);
+      ellipse(this.x, this.y, this.sneezeTracker);
       pop();
       text("Achooo!!", this.x + 10, this.y - 10);
     }
     //reset sneeze
-    if (this.sneezeRange === this.sneezeBound) {
-      this.sneezeRange = 0;
+    if (this.sneezeTracker >= this.sneezeBound) {
+      this.sneezeTracker = 0;
     }
   }
 
@@ -34,7 +35,9 @@ class Person {
   }
 
   update() {
-    this.move();
+    if (!this.pause) {
+      this.move();
+    }
     this.bounce();
     this.show();
     this.infecting();
@@ -112,6 +115,7 @@ class Person {
         this.angle = random(360);
         newX = this.speed * Math.cos(this.angle);
         newY = this.speed * Math.sin(this.angle);
+        this.speed = random(5);
       }
     }
   }

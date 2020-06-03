@@ -3,12 +3,29 @@ class Person {
     this.x = random(windowWidth);
     this.y = random(height);
     this.diameter = 20;
-    this.speed = 3;
+    this.speed = random(5);
     this.angle = random(360);
     this.isInfecting = false;
     this.isInfected = infected;
     this.hasContacted = false;
     this.red = infected ? 255 : 0;
+    this.sneezeRange = 0;
+    this.sneezeBound = 50;
+  }
+
+  sneeze() {
+    if (this.isInfected && this.sneezeRange < this.sneezeBound) {
+      this.sneezeRange += 0.5;
+      push();
+      fill(50, 89, 100);
+      ellipse(this.x, this.y, this.sneezeRange);
+      pop();
+      text("Achooo!!", this.x + 10, this.y - 10);
+    }
+    //reset sneeze
+    if (this.sneezeRange === this.sneezeBound) {
+      this.sneezeRange = 0;
+    }
   }
 
   move() {
@@ -21,6 +38,7 @@ class Person {
     this.bounce();
     this.show();
     this.infecting();
+    this.sneeze();
   }
 
   infecting() {

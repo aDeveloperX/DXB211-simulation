@@ -14,6 +14,7 @@ class Person {
     this.pause = false;
   }
 
+  //when the person sneezes
   sneeze() {
     if (this.isInfected) {
       this.sneezeTracker += 0.5;
@@ -29,11 +30,13 @@ class Person {
     }
   }
 
+  //move the person base on the speed and angle
   move() {
     this.x += this.speed * Math.cos(this.angle);
     this.y += this.speed * Math.sin(this.angle);
   }
 
+  //the combination of user actions
   update() {
     if (!this.pause) {
       this.move();
@@ -44,6 +47,7 @@ class Person {
     this.sneeze();
   }
 
+  //infecting check
   infecting() {
     if (this.isInfecting && this.red < 255) {
       this.red += 1;
@@ -54,6 +58,7 @@ class Person {
     }
   }
 
+  //display the person
   show() {
     if (this.isInfected || this.isInfecting) {
       push();
@@ -67,6 +72,7 @@ class Person {
     }
   }
 
+  //check the infection between this object and another person object
   infect(person) {
     if (
       this.isInfected &&
@@ -95,17 +101,20 @@ class Person {
     }
   }
 
+  //check if the person is collided with the wall
   collidedWall() {
     return (
       this.x > windowWidth || this.y > windowHeight || this.x < 0 || this.y < 0
     );
   }
 
+  //make the user bounce off the wall
   bounce() {
     if (this.collidedWall()) {
       this.angle = random(360);
       var newX = this.speed * Math.cos(this.angle);
       var newY = this.speed * Math.sin(this.angle);
+      // keen generating new angle until the user bounces the wall
       while (
         this.x + newX > windowWidth ||
         this.y + newY > windowHeight ||

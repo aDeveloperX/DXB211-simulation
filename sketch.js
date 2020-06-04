@@ -1,8 +1,6 @@
 var people = [];
 var totalPPL = 40;
 var totalInfecters = totalPPL / 5;
-let socialDistance;
-let hasStarted = false;
 let isGatheringApplied = false;
 let isMaskApplied = false;
 let isStayingHomeApplied = false;
@@ -10,6 +8,7 @@ let start = Date.now();
 let end;
 let isAllInfected = false;
 
+//generate people and push them into the list
 function generatePPL() {
   for (var i = 0; i < totalPPL; i++) {
     people.push(new Person(false));
@@ -59,6 +58,7 @@ function setPause() {
   });
 }
 
+// add button and button actions
 function setupButtons() {
   btnGathering = createButton("Toggle Gathering restriction");
   btnMask = createButton("Toggle Mask restriction");
@@ -81,6 +81,7 @@ function setupButtons() {
   });
 }
 
+//display and perform actions for each peron in the list
 function showPPL() {
   for (var i = 0; i < totalPPL + totalInfecters; i++) {
     people[i].update();
@@ -88,6 +89,7 @@ function showPPL() {
   }
 }
 
+//display the timer
 function displayTime() {
   push();
   textSize(30);
@@ -144,7 +146,6 @@ function setup() {
 
 function draw() {
   background(50, 89, 100);
-  //while (!hasStarted) {}
   showPPL();
   infect();
   setSneezeBound();
@@ -152,6 +153,5 @@ function draw() {
   displayResult();
   setPause();
   displayTime();
-
   displayRestrictions();
 }

@@ -44,8 +44,9 @@ function setSneezeBound() {
 
 function restartSimulation() {
   people = [];
-  totalPPL = isGatheringApplied ? 10 : 40;
-  totalInfecters = Math.round(totalPPL / 5);
+  totalPPL = isGatheringApplied ? 20 : 60;
+  totalInfecters = totalPPL / 4;
+
   generatePPL();
   end = undefined;
   isAllInfected = false;
@@ -143,6 +144,7 @@ function setup() {
 
 function draw() {
   background(50, 89, 100);
+  //while (!hasStarted) {}
   showPPL();
   infect();
   setSneezeBound();
@@ -150,5 +152,6 @@ function draw() {
   displayResult();
   setPause();
   displayTime();
+
   displayRestrictions();
 }

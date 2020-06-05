@@ -22,7 +22,7 @@ class Person {
       fill(50, 89, 100);
       ellipse(this.x, this.y, this.sneezeTracker);
       pop();
-      text("Achooo!!", this.x + 10, this.y - 10);
+      text("ahemmm!!", this.x + 10, this.y - 10);
     }
     //reset sneeze
     if (this.sneezeTracker >= this.sneezeBound) {

@@ -7,7 +7,11 @@ let isStayingHomeApplied = false;
 let start = Date.now();
 let end;
 let isAllInfected = false;
+let sound;
 
+function preload() {
+  sound = loadSound("assets/sound.mp3");
+}
 //generate people and push them into the list
 function generatePPL() {
   for (var i = 0; i < totalPPL; i++) {
@@ -125,6 +129,7 @@ function checkInfection() {
 
 function displayResult() {
   if (isAllInfected) {
+    sound.pause();
     push();
     textSize(30);
     text(
@@ -135,6 +140,8 @@ function displayResult() {
       windowHeight / 2 - 30
     );
     pop();
+  } else if (sound.isPaused()) {
+    sound.play();
   }
 }
 
@@ -142,6 +149,7 @@ function setup() {
   createCanvas(windowWidth, windowHeight);
   generatePPL();
   setupButtons();
+  sound.loop();
 }
 
 function draw() {
